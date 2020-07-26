@@ -1,0 +1,58 @@
+<style>
+	iframe{
+        width: 45%;
+        }
+    body{
+    	background-color:powderblue;
+    }  
+    table{
+		text-align: center;
+		margin: auto;
+		background-color:F67006;
+	}
+	input[type='range'] {
+      overflow: hidden;
+      width: 150px;
+      -webkit-appearance: none;
+      background-color: powderblue;
+      cursor: ew-resize;
+    } 
+
+    input[type='submit'] {
+      background-color: F67006;
+      border: 0
+    } 
+
+    input[type="text"] {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: powderblue;
+    -webkit-box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.2);
+    margin: auto;
+    padding: 5px;
+    text-align: center; 
+    width: 150px;
+    }  	
+</style>
+<form action="/main">
+  <table border=2 style="width:50%">
+  	<tr>
+  		<td><label for="vol">Year:</label></td>
+  		<td><input type="range" id="year" name="year" min="1930" max="1940" oninput="yearOutputId.value = year.value"></td>
+  		<td><output id="yearOutputId">1935</output></td>
+  	</tr>
+  <tr>
+    <td><label for="word">Keyword:</label></td>
+    <td><input type="text" id="word" name="word"><br><br></td>
+    <td><input type="submit" value="Submit"></td>
+  </tr>
+</table>
+</form> 
+
+<iframe src="http://localhost:5000/map" height="500" title="Iframe Example" style="position:absolute; top: 180px; left: 80px;" ></iframe>
+<iframe src="http://localhost:5000/text" height="500" title="Iframe Example" style="position:absolute; top: 180px; left: 890px;" ></iframe>
+
+
