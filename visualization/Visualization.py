@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[290]:
+# In[ ]:
 
 
 from flask import Flask
@@ -11,97 +11,128 @@ from threading import Thread
 from flask import render_template
 from flask import request
 import folium
-import json
+import json,requests
 
 
-# In[291]:
+# In[ ]:
 
 
-_map = folium.Map(location=[38.9597594, 34.9249653],zoom_start=7,tiles="Mapbox Control Room")
-
-
-# In[292]:
-
-
-cityBoundaries = folium.FeatureGroup(name="City Boundaries")
-
-
-# In[293]:
-
-
-cityBoundaries.add_child(folium.GeoJson(open("cities.json","r",encoding="utf-8-sig").read(),
+def create_map():
+    _map = folium.Map(location=[38.9597594, 34.9249653],zoom_start=6,tiles="Mapbox Control Room")
+    cityBoundaries = folium.FeatureGroup(name="City Boundaries")
+    cityBoundaries.add_child(folium.GeoJson(open("cities.json","r",encoding="utf-8-sig").read(),
                                      style_function=lambda city: {'fillColor':"red"}))
+    _map.add_child(cityBoundaries)
+    _map.add_child(folium.LayerControl())
+    _map.save("turkey.html")
+    return _map
 
 
-# In[294]:
+# In[ ]:
 
 
-_map.add_child(cityBoundaries)
-_map.add_child(folium.LayerControl())
-
-
-# In[310]:
-
-
-def show_on_map(_map,word,year):
-    cities = open("cities_of_turkey.json","r+").read()
+def show_on_map(_map,locations,word,year):
+    cities = open("cities_of_turkey.json","r+",encoding="utf-8-sig").read()
     cities = json.loads(cities)
     for city in cities:
         point = [city['latitude'],city['longitude']]
         name = city['name']
-        folium.Marker(point,popup=[word,year,name],tooltip='Click For Date Information').add_to(_map)
-    cityBoundaries = folium.FeatureGroup(name="City Boundaries")
+        if name in locations:
+            folium.Marker(point,popup=[word,year,name],tooltip='Click For More Information').add_to(_map)
     _map.save("turkey.html")
 
 
-# In[311]:
+# In[ ]:
+
+
+def convert_to_table(newspapers):
+    styles = open("table.css","r+",encoding="utf-8-sig").read()
+    table = "<table border=1 id='customers'><tr>"
+    for key in newspapers['newspapers'][0].keys():
+        table += "<th>"+key+"</th>"
+    table +="<tr>"
+    for newspaper in newspapers['newspapers']:
+        table +="<tr>"
+        for value in newspaper.values():
+            table += "<td>"+str(value)+"</td>"
+        table +="</tr>"
+    table += "</table>"
+    return styles+table
+
+
+# In[ ]:
+
+
+def show_on_text():
+    url = "APİ_URL"
+    headers = {'Content-type': 'application/json'}
+    r = requests.get(url,headers=headers)
+    data_str = r.text.replace("'", '"')
+    data_json = json.loads(data_str)
+    locations = []
+    for newspaper in data_json['newspapers']:
+        locations.append(newspaper['location'])
+    return convert_to_table(data_json),locations
+
+
+# In[ ]:
+
+
+def crete_text_html(text):
+    text_html= open("text.html","w",encoding="utf-8-sig")
+    text_html.write(text)
+    text_html.close()
+
+
+# In[ ]:
 
 
 def start_service():
-    global _map
     keyword = "Nothing"
     year = 0
-    app = Flask(__name__)
-    
+    app  = Flask(__name__)
     CORS(app)
     
     @app.route('/main', methods=['GET'])
     def get():
+        _map = create_map()
         keyword = request.args.get('word', None)
         year = request.args.get('year', None)
         print(keyword,year)
         if keyword and year:
-            show_on_map(_map,keyword,year)
-        return open("main.html","r+").read()
+            text,locations = show_on_text()
+            crete_text_html(text)
+            show_on_map(_map,locations,keyword,year)
+        else:
+            crete_text_html("<h1>NewsPapers List</h1>")
+            _map.save("turkey.html")
+        return open("main.html","r+",encoding="utf-8-sig").read()
         
     @app.route('/map',methods=['GET'])
     def get_map():
-        return open("turkey.html","r+").read()
+        return open("turkey.html","r+",encoding="utf-8-sig").read()
     
     @app.route('/text',methods=['GET'])
     def get_text():
-        return open("text.html","r+").read()
-    
-#     @app.route('/input',methods=['GET'])
-#     def get_input():
-#         return open("input.html","r+").read()
+        return open("text.html","r+",encoding="utf-8-sig").read()
     
     app.run(host='0.0.0.0', port=5000)
 
 
-# In[312]:
+# In[ ]:
 
 
 start_service()
 
 
-# In[166]:
+# In[ ]:
 
 
 thread = Thread(target=start_service)
 
 
 # In[ ]:
+
 
 
 thread.start()
