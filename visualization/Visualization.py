@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 from flask import Flask
@@ -14,7 +14,7 @@ import folium
 import json,requests
 
 
-# In[ ]:
+# In[2]:
 
 
 def create_map():
@@ -28,7 +28,7 @@ def create_map():
     return _map
 
 
-# In[ ]:
+# In[3]:
 
 
 def show_on_map(_map,locations,word,year):
@@ -42,7 +42,7 @@ def show_on_map(_map,locations,word,year):
     _map.save("turkey.html")
 
 
-# In[ ]:
+# In[46]:
 
 
 def convert_to_table(newspapers):
@@ -53,14 +53,20 @@ def convert_to_table(newspapers):
     table +="<tr>"
     for newspaper in newspapers['newspapers']:
         table +="<tr>"
+        counter = 0
         for value in newspaper.values():
-            table += "<td>"+str(value)+"</td>"
+            if counter == 2:
+                name = "Gazete"
+                table += "<td>"+' <a href="{}" target="_blank">{}</a></td>'.format(str(value),name)
+            else:
+                table += "<td>{}</td>".format(str(value))
+            counter += 1
         table +="</tr>"
     table += "</table>"
     return styles+table
 
 
-# In[ ]:
+# In[47]:
 
 
 def show_on_text():
@@ -75,7 +81,7 @@ def show_on_text():
     return convert_to_table(data_json),locations
 
 
-# In[ ]:
+# In[48]:
 
 
 def crete_text_html(text):
@@ -84,7 +90,7 @@ def crete_text_html(text):
     text_html.close()
 
 
-# In[ ]:
+# In[49]:
 
 
 def start_service():
@@ -116,10 +122,16 @@ def start_service():
     def get_text():
         return open("text.html","r+",encoding="utf-8-sig").read()
     
+    @app.route('/newspaper',methods=['GET'])
+    def get_newspaper():
+#         return open("newspaper.html","r+",encoding="utf-8-sig").read()
+            return "Merhaba Rumed"
+    
+    
     app.run(host='0.0.0.0', port=5000)
 
 
-# In[ ]:
+# In[50]:
 
 
 start_service()
