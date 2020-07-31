@@ -1,21 +1,13 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
-from flask import Flask
-from flask_cors import CORS
-from flask import jsonify
+import json
+import requests
 from threading import Thread
-from flask import render_template
-from flask import request
+
 import folium
-import json,requests
-
-
-# In[2]:
-
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
 
 def create_map():
     _map = folium.Map(location=[38.9597594, 34.9249653],zoom_start=6,tiles="Mapbox Control Room")
@@ -27,10 +19,6 @@ def create_map():
     _map.save("turkey.html")
     return _map
 
-
-# In[3]:
-
-
 def show_on_map(_map,locations,word,year):
     cities = open("cities_of_turkey.json","r+",encoding="utf-8-sig").read()
     cities = json.loads(cities)
@@ -40,10 +28,6 @@ def show_on_map(_map,locations,word,year):
         if name in locations:
             folium.Marker(point,popup=[word,year,name],tooltip='Click For More Information').add_to(_map)
     _map.save("turkey.html")
-
-
-# In[46]:
-
 
 def convert_to_table(newspapers):
     styles = open("table.css","r+",encoding="utf-8-sig").read()
@@ -66,9 +50,6 @@ def convert_to_table(newspapers):
     return styles+table
 
 
-# In[47]:
-
-
 def show_on_text():
     url = "APİ_URL"
     headers = {'Content-type': 'application/json'}
@@ -81,16 +62,10 @@ def show_on_text():
     return convert_to_table(data_json),locations
 
 
-# In[48]:
-
-
 def crete_text_html(text):
     text_html= open("text.html","w",encoding="utf-8-sig")
     text_html.write(text)
     text_html.close()
-
-
-# In[49]:
 
 
 def start_service():
@@ -130,22 +105,6 @@ def start_service():
     
     app.run(host='0.0.0.0', port=5000)
 
-
-# In[50]:
-
-
 start_service()
-
-
-# In[ ]:
-
-
 thread = Thread(target=start_service)
-
-
-# In[ ]:
-
-
-
 thread.start()
-
