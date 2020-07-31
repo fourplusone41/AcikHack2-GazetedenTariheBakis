@@ -81,17 +81,17 @@ def paper_to_db(paper,paper_name):
             paper_json['name'] = paper_name
             paper_json['date'] = date
             paper_json['url'] = url
-            solr.index(paper_json)
             db_gazete.save(paper_json, pdf, "application/pdf")
-            # ocr = OCR_Handler(pdf)
-            # ocr.run()
-            # for i, text in enumerate(ocr.text):
-            #     paper_json["ner"] = ner.run(text)
-            #     paper_json["page"] = i + 1
-            #     paper_json["text"] = text
-            #     img_tmp = ocr.pages[i]
-            #     db_page.save(paper_json, img_tmp, "image/png")
-            #     solr.index(paper_json)
+            ocr = OCR_Handler(pdf)
+            ocr.run()
+            for i, text in enumerate(ocr.text):
+                paper_json["ner"] = ner.run(text)
+                paper_json["page"] = i + 1
+                paper_json["text"] = text
+                img_tmp = ocr.pages[i]
+                db_page.save(paper_json, img_tmp, "image/png")
+                #TODO: 404 Error
+                #solr.index(paper_json)
     
 if __name__ == '__main__':
     r = requests.get(DATASET_URL)

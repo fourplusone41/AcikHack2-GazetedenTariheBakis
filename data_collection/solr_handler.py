@@ -19,7 +19,7 @@ class Solr_Handler():
         self.solr.ping()
 
     def index(self, data):
-        doc_id = ".".join((data["date"], data["name"] + "_"))# + data[page]))
+        doc_id = ".".join((data["date"], data["name"] + "_" + data[page]))
         data["id"] = doc_id
         data["title"] = doc_id
         self.solr.add([data])

@@ -52,3 +52,4 @@ Browse to `localhost:5000/main` and use the UI for queries.
 # TODO
 * Use multithreading to speed up data_collection and processing.
 * Improve UI design using `bootstrap`.
+* Implement the query API
