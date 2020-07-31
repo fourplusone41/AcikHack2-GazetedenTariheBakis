@@ -12,7 +12,7 @@ services:
       - "8983:8983"
     networks:
       - fourplusone
-    restart: always
+    # restart: always
 
   couchdb:
     container_name: couchdb
@@ -28,19 +28,16 @@ services:
     environment:
       COUCHDB_USER: $COUCHDB_USER
       COUCHDB_PASSWORD: $COUCHDB_PASSWORD
-    restart: always
+    # restart: always
 
-#   formflekslogapi:
-#     build: ..
-#     ports:
-#       - "5001:80"
-#     environment:
-#       TZ: "Europe/Istanbul"
-#     networks:
-#       - elk
-#     depends_on:
-#       - elasticsearch
-#     restart: always
+  web_service:
+    build: ../web_service
+    container_name: web_service
+    ports:
+      - "5000:5000"
+    networks:
+      - fourplusone
+    # restart: always
 
 networks:
   fourplusone:
