@@ -12,6 +12,10 @@ services:
       - "8983:8983"
     networks:
       - fourplusone
+    command:
+      - solr-precreate
+      - gettingstarted
+  
     # restart: always
 
   couchdb:

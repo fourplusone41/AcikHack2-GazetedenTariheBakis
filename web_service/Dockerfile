@@ -1,6 +1,6 @@
 ## First stage
 FROM ubuntu:20.04 as base
-RUN apt-get update -y && apt-get install -y python3-minimal
+RUN apt-get update -y && apt-get install -y python3.8-minimal
 
 ## Second stage
 FROM base as builder
@@ -11,7 +11,7 @@ RUN pip3 install -r requirements.txt
 ## Third stage
 FROM base
 # Copy pip packages
-COPY --from=builder /usr/local/lib/python3.7/dist-packages /usr/local/lib/python3.7/dist-packages
+COPY --from=builder /usr/local/lib/python3.8/dist-packages /usr/local/lib/python3.8/dist-packages
 # Create data folder
 RUN mkdir /data
 # Copy app
