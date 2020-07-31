@@ -3,7 +3,7 @@
 
 # GazetedenTariheBakis
 
-The aim of this project is to provide a searchable database based on the "Istanbul Gazeteden Tarihi Bakış" Dataset.
+The aim of this project is to provide a searchable database based on the [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.tr:4444/ekos/GAZETE/) Dataset.
 
 # Architecture
 
@@ -47,7 +47,7 @@ Run data collection script
     pip3 install -r requirements.txt
     python 3 main.py
 
-Browse to `localhost:5000` and use the UI for queries.
+Browse to `localhost:5000/main` and use the UI for queries.
 
 # TODO
 * Use multithreading to speed up data_collection and processing.
