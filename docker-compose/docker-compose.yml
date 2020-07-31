@@ -1,0 +1,53 @@
+version: '3.3'
+
+services:
+  solr:
+    container_name: solr
+    image: solr:$SOLR_VERSION
+    volumes:
+      - type: volume
+        source: solr
+        target: /var/solr
+    ports:
+      - "8983:8983"
+    networks:
+      - fourplusone
+    restart: always
+
+  couchdb:
+    container_name: couchdb
+    image: couchdb:$COUCHDB_VERSION
+    volumes:
+      - type: volume
+        source: couchdb
+        target: /opt/couchdb/data
+    ports:
+      - "5984:5984"
+    networks:
+      - fourplusone
+    environment:
+      COUCHDB_USER: $COUCHDB_USER
+      COUCHDB_PASSWORD: $COUCHDB_PASSWORD
+    restart: always
+
+#   formflekslogapi:
+#     build: ..
+#     ports:
+#       - "5001:80"
+#     environment:
+#       TZ: "Europe/Istanbul"
+#     networks:
+#       - elk
+#     depends_on:
+#       - elasticsearch
+#     restart: always
+
+networks:
+  fourplusone:
+    driver: bridge
+
+volumes:
+  solr:
+    driver: local
+  couchdb:
+    driver: local
