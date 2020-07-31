@@ -22,7 +22,7 @@ The aim of this project is to provide a searchable database based on the "Istanb
     * Storing data in CouchDB
     * Indexing data in Solr
 
-* The API allows for quering the data by date and location in the database as well as full text search using Solr, providing both the original scans as well as the OCR results.
+* The API allows for querying the data by date and location in the database as well as full text search using Solr, providing both the original scans as well as the OCR results.
 
 * The web GUI offers a user friendly way to query the data and visualize the results.
 
@@ -50,5 +50,5 @@ Run data collection script
 Browse to `localhost:5000` and use the UI for queries.
 
 # TODO
-* Use multithreading to spead up data_collection and processing.
+* Use multithreading to speed up data_collection and processing.
 * Improve UI design using `bootstrap`.
