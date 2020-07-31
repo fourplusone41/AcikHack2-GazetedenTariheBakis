@@ -3,14 +3,14 @@
 
 # GazetedenTariheBakis
 
-Bu projenin amacı "Istanbul Gazeteden Tarihi Bakış" veriseti kullanılarak arama yapılabilir bir veritabanı sağlamaktır.
+Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.tr:4444/ekos/GAZETE/) veriseti kullanılarak arama yapılabilir bir veritabanı sağlamaktır.
 
 # Mimari
 
 * `docker-compose`yapısı, 4 farklı dockerize edilmiş servis içermektedir. Bunlar,
     * Kalıcı depolama için CouchDB Veritabanı.
     * Bir arama motoru olarak Solr.
-    * Bize öel bir RESTful API.
+    * Bize özel bir RESTful API.
     * Bir web tabanlı kullanıcı arayüzü (GUI).
     
 * `data_collection` komut dosyası şu işlemleri gerçekleştirmektedir,
@@ -38,7 +38,7 @@ Solr ve CouchDB ortamlarını çalıştırın,
     cd docker-compose
     docker-compose up -d
 
-NER alt modülü için en yeni `zemberek_full.jar`dosyasını [buradan](https://drive.google.com/drive/folders/1FN80VbqesnqU21us4c4Pvgv2VqUsSf2z) indirin.
+NER alt modülü için en yeni `zemberek_full.jar` dosyasını [buradan](https://drive.google.com/drive/folders/1FN80VbqesnqU21us4c4Pvgv2VqUsSf2z) indirin.
 İndirilen `.jar` dosyasını, `data_collection` dizini altına ekleyin.
 
 `data_collection` komut dosyasını çalıştırın.
@@ -47,7 +47,7 @@ NER alt modülü için en yeni `zemberek_full.jar`dosyasını [buradan](https://
     pip3 install -r requirements.txt
     python 3 main.py
 
-Sorgular yapmak için, `localhost:5000` adresine gidin ve kullanıcı arayüzünü kullanarak sorgularınızı gerçekleştirin.
+Sorgular yapmak için, `localhost:5000/main` adresine gidin ve kullanıcı arayüzünü kullanarak sorgularınızı gerçekleştirin.
 
 # TODO
 * Veri toplama ve işlemeyi hızlandırmak için çoklu iş parçacığı kullanın.
