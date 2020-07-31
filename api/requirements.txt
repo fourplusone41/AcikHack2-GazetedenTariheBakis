@@ -1,0 +1,4 @@
+cloudant==2.13.0
+Flask==1.1.2 
+folium==0.11.0
+pysolr==3.9.0

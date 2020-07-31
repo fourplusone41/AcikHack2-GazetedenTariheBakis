@@ -8,10 +8,10 @@ Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.t
 # Mimari
 
 * `docker-compose`yapısı, 4 farklı dockerize edilmiş servis içermektedir. Bunlar,
-    * Kalıcı depolama için CouchDB Veritabanı.
-    * Bir arama motoru olarak Solr.
-    * Bize özel bir RESTful API.
-    * Bir web tabanlı kullanıcı arayüzü (GUI).
+    * Kalıcı depolama için CouchDB Veritabanı. (Port 5984)
+    * Bir arama motoru olarak Solr. (Port 8983)
+    * Bize özel bir RESTful API. (Port 4000)
+    * Bir web tabanlı kullanıcı arayüzü (GUI). (Port 5000)
     
 * `data_collection` komut dosyası şu işlemleri gerçekleştirmektedir,
     * Veriseti olarak kullanılan web sitesinden veri bilgilerini alır (web scraping).
@@ -52,4 +52,4 @@ Sorgular yapmak için, `localhost:5000/main` adresine gidin ve kullanıcı aray�
 # TODO
 * Veri toplama ve işlemeyi hızlandırmak için çoklu iş parçacığı kullanın.
 * Kullanıcı arayüzünü geliştirmek için `bootstrap` kullanın.
-
+* API tamamlayın.

@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from db_handler import DB_Handler
 from ocr_handler import OCR_Handler
 from ner_handler import NER_Handler
+from solr_handler import Solr_Handler
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
@@ -20,6 +21,7 @@ DATASET_URL = config["DEFAULT"]["dataset_url"]
 db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
 ner = NER_Handler()
+solr = Solr_Handler()
 
 def createDirectory(dirPath):
     if not os.path.isdir(dirPath):
@@ -88,6 +90,8 @@ def paper_to_db(paper,paper_name):
                 paper_json["text"] = text
                 img_tmp = ocr.pages[i]
                 db_page.save(paper_json, img_tmp, "image/png")
+                #TODO: 404 Error
+                #solr.index(paper_json)
     
 if __name__ == '__main__':
     r = requests.get(DATASET_URL)
