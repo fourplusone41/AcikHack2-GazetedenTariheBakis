@@ -43,6 +43,15 @@ services:
       - fourplusone
     # restart: always
 
+  api:
+    build: ../api
+    container_name: api
+    ports:
+      - "4000:4000"
+    networks:
+      - fourplusone
+    # restart: always
+
 networks:
   fourplusone:
     driver: bridge

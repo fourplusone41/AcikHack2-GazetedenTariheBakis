@@ -12,13 +12,11 @@ RUN pip3 install -r requirements.txt
 FROM base
 # Copy pip packages
 COPY --from=builder /usr/local/lib/python3.8/dist-packages /usr/local/lib/python3.8/dist-packages
-# Create data folder
-RUN mkdir /data
 # Copy app
 COPY ./app /app
 WORKDIR /app
 # Open ports
-EXPOSE 4000
+EXPOSE 5000
 # Start service
 ENTRYPOINT [ "python3" ]
 CMD [ "service.py" ]
