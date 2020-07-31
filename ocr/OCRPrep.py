@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 import os,sys
 from pdf2image import convert_from_path
 from OCR import Ocr
-
-
-# In[2]:
 
 
 def fileName(path):
@@ -22,8 +16,6 @@ def fileName(path):
 
 
 
-# In[3]:
-
 
 def pdf2png(dirName,pdfFileName):
     dpi = 500 # dots per inch
@@ -34,8 +26,6 @@ def pdf2png(dirName,pdfFileName):
         page.save(dirName+"/"+str('output_{}.png'.format(i)), 'PNG')
 
 
-# In[4]:
-
 
 def createDir(dirName):
     try:
@@ -45,9 +35,6 @@ def createDir(dirName):
         print("Directory " , dirName ,  " already exists")
 
 
-# In[5]:
-
-
 dirName = 'DataSet'
 pdfFileName = "anadolu_1938_kanunusani_2_.pdf"
 createDir(dirName)
@@ -55,13 +42,8 @@ pdf2png(dirName,pdfFileName)
 image = fileName(dirName)
 
 
-# In[6]:
-
 
 Ocr(dirName,image)
-
-
-# In[ ]:
 
 
 
