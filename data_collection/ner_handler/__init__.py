@@ -1,0 +1,1 @@
+from .ner_handler import NER_Handler
