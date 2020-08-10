@@ -26,7 +26,7 @@ class OCR_Handler():
         self.ocr_queue = Queue()
         self.workers = [
             Thread(target=self.ocr, daemon=True)
-            for _ in range(4)
+            for _ in range(2)
         ]
 
     def imagePreprocessing(self, page):
@@ -39,8 +39,9 @@ class OCR_Handler():
 
     def ocr(self):
         #print("OCR progress")
-        while True:
-            page = self.ocr_queue.get()
+        #while True:
+        #    page = self.ocr_queue.get()
+        for i, page in tqdm(enumerate(self.pages)):
             img_clean = self.imagePreprocessing(page)
             text = pytesseract.image_to_string(img_clean, self.lang)
             self.text.append(text)
@@ -55,11 +56,12 @@ class OCR_Handler():
 
     def run(self):
         self.pdf2img()
+        self.ocr()
         
-        for w in self.workers:
-            w.start()
+        #for w in self.workers:
+        #    w.start()
 
-        for w in tqdm(self.workers):
-            w.join()
+        #for w in tqdm(self.workers):
+        #    w.join()*/
 
 
