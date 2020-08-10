@@ -13,19 +13,17 @@ from cloudant.document import Document
 
 import pysolr
 
-def start_service():
-    keyword = "Nothing"
-    year = 0
-    app  = Flask(__name__)
-    CORS(app)
-    
-    @app.route('/query/<keyword>/<start_date>/<end_date>', methods=['GET'])
-    def get_result():
-        #TODO
-        return 0
-        
+keyword = "Nothing"
+year = 0
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/query/<keyword>/<start_date>/<end_date>', methods=['GET'])
+def get():
+    #TODO
+    return 'JSON'
+
+if __name__ == "__main__":
     app.run(host='0.0.0.0', port=4000)
 
-start_service()
-thread = Thread(target=start_service)
-thread.start()
