@@ -7,6 +7,11 @@ import pytesseract
 from tqdm import tqdm
 from pdf2image import convert_from_bytes
 
+from queue import Queue
+from threading import Thread
+
+
+
 class OCR_Handler():
     """
     OCR handler
@@ -17,6 +22,12 @@ class OCR_Handler():
         self.dpi = 300 # dots per inch
         self.pages = []
         self.text = []
+        # Queue for multithreading
+        self.ocr_queue = Queue()
+        self.workers = [
+            Thread(target=self.ocr, daemon=True)
+            for _ in range(4)
+        ]
 
     def imagePreprocessing(self, page):
         #image = cv2.imread(path)
@@ -27,18 +38,28 @@ class OCR_Handler():
         return gray
 
     def ocr(self):
-        print("OCR progress")
-        for i, page in tqdm(enumerate(self.pages)):
+        #print("OCR progress")
+        while True:
+            page = self.ocr_queue.get()
             img_clean = self.imagePreprocessing(page)
             text = pytesseract.image_to_string(img_clean, self.lang)
             self.text.append(text)
 
+            self.ocr_queue.task_done()
+
     def pdf2img(self):
-        print("convert pdf to images")
+        #print("convert pdf to images")
         self.pages = convert_from_bytes(self.file, self.dpi)
+        for page in self.pages:
+            self.ocr_queue.put(page)
 
     def run(self):
         self.pdf2img()
-        self.ocr()
+        
+        for w in self.workers:
+            w.start()
+
+        for w in tqdm(self.workers):
+            w.join()
 
 
