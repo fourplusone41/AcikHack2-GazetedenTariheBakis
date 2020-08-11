@@ -1,6 +1,70 @@
 version: '3.3'
 
 services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:$ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: $ELK_PASSWORD
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks
+      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - fourplusone
+    # restart: always
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:$ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - fourplusone
+    depends_on:
+      - elasticsearch
+    # restart: always
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:$ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: false
+    ports:
+      - "5601:5601"
+    networks:
+      - fourplusone
+    depends_on:
+      - elasticsearch
+    # restart: always
+    
   solr:
     container_name: solr
     image: solr:$SOLR_VERSION
@@ -38,7 +102,7 @@ services:
     build: ../web_service
     container_name: web_service
     ports:
-      - "5000:5000"
+      - "3000:3000"
     networks:
       - fourplusone
     # restart: always
@@ -60,4 +124,6 @@ volumes:
   solr:
     driver: local
   couchdb:
+    driver: local
+  elasticsearch:
     driver: local

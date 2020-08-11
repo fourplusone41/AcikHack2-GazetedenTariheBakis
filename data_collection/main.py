@@ -9,14 +9,14 @@ import configparser
 from queue import Queue
 from threading import Thread
 
-
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 
 from db_handler import DB_Handler
 from ocr_handler import OCR_Handler
 from ner_handler import NER_Handler
-from solr_handler import Solr_Handler
+from elk_handler import ELK_Handler
+#from solr_handler import Solr_Handler
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
@@ -26,6 +26,7 @@ db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
 ner = NER_Handler()
 #solr = Solr_Handler()
+es = ELK_Handler()
 
 # Queue for multithreading
 row_queue = Queue()
@@ -84,6 +85,8 @@ def parallel_process():
         paper_json['date'] = date
         paper_json['url'] = url
         db_gazete.save(paper_json, pdf, "application/pdf")
+        # es.index(paper_json, "gazete-index")
+        
         ocr = OCR_Handler(pdf)
         ocr.run()
         for i, text in enumerate(ocr.text):
@@ -91,9 +94,10 @@ def parallel_process():
             paper_json["page"] = i + 1
             paper_json["text"] = text
             img_tmp = ocr.pages[i]
+            #INFO: Solr replaced with elasticsearch
+            es.index(paper_json, "page-index")
             db_page.save(paper_json, img_tmp, "image/png")
-            #TODO: 404 Error
-            #solr.index(paper_json)
+            
 
         row_queue.task_done()
 
@@ -106,7 +110,7 @@ def paper_to_db(paper,paper_name):
         for _ in range(1)
     ]
 
-    for table in tables: #gazetenin yılları
+    for table in tables[:2]: #gazetenin yılları
         table_body = table.find('table')
         rows = table_body.find_all('tr')
         del rows[0] #tablonun sütun adları silinir
