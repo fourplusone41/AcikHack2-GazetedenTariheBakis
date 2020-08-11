@@ -49,7 +49,17 @@ class DB_Handler():
             with Document(self.db, doc_id) as document:
                 document.put_attachment(att_type.split("/")[-1], att_type, attachment)
 
+    def query(self, id):
+        selector = {'_id': {'$eq': id}}
+        docs = self.db.get_query_result(selector)
+        for doc in docs:
+            print(doc)
 
+    # def query_attachement(self, id):
+    #     selector = {'_id': {'$eq': id}}
+    #     docs = self.db.get_attachement()
+    #     for doc in docs:
+    #         print(doc)
 
             
         
