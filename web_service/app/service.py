@@ -39,4 +39,4 @@ def get_newspaper():
 #         return open("newspaper.html","r+",encoding="utf-8-sig").read()
         return "Merhaba Rumed"
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=3000)
