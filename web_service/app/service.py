@@ -19,7 +19,7 @@ def home():
         
         print(keyword,start_year, end_year)
         if keyword and start_year and end_year:
-            text,locations = show_on_text("http://localhost:4000/query?keyword={}&start_date={}_01_01&end_date={}_12_31".format(keyword, start_year, end_year))
+            text,locations = show_on_text("http://api:4000/query?keyword={}&start_date={}_01_01&end_date={}_12_31".format(keyword, start_year, end_year))
             crete_text_html(text)
             #show_on_map(_map,locations,keyword,start_year)
         
