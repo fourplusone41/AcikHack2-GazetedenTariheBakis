@@ -8,7 +8,7 @@ from datetime import datetime
 from flask import Flask, jsonify, request, render_template
 from flask_restful import Resource, Api, reqparse
 
-from db_handler import DB_Handler
+#from db_handler import DB_Handler
 from elk_handler import ELK_Handler
 
 keyword = "Nothing"
@@ -23,7 +23,7 @@ parser.add_argument('keyword', type=str)
 parser.add_argument('start_date', type=str)
 parser.add_argument('end_date', type=str)
 
-db_page = DB_Handler("page")
+#db_page = DB_Handler("page")
 es = ELK_Handler()
 
 class GazeteQuery(Resource):

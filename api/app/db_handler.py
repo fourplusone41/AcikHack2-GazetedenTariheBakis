@@ -19,6 +19,7 @@ class DB_Handler():
     CouchDB handler
     """
     def __init__(self, db_name):
+        print("connecting to DB: " + URL)
         self.client = CouchDB(USERNAME, PASSWORD, url= URL, connect=True)
         self.db_name = db_name
         self.db = None

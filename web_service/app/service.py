@@ -6,25 +6,30 @@ from flask_cors import CORS
 
 from utils import *
 
-keyword = "Nothing"
-year = 0
 app  = Flask(__name__)
 CORS(app)
 
-@app.route('/main', methods=['GET'])
-def get():
+@app.route('/', methods=['GET', 'POST'])
+def home():
     _map = create_map()
-    keyword = request.args.get('word', None)
-    year = request.args.get('year', None)
-    print(keyword,year)
-    if keyword and year:
-        text,locations = show_on_text()
-        crete_text_html(text)
-        show_on_map(_map,locations,keyword,year)
+    if request.method == 'POST':
+        keyword = str(request.form['keyword'])
+        start_year = str(request.form['start_year'])
+        end_year = str(request.form['end_year'])
+        
+        print(keyword,start_year, end_year)
+        if keyword and start_year and end_year:
+            text,locations = show_on_text("http://localhost:4000/query?keyword={}&start_date={}_01_01&end_date={}_12_31".format(keyword, start_year, end_year))
+            crete_text_html(text)
+            #show_on_map(_map,locations,keyword,start_year)
+        
+        return render_template('results.html', page="Results")
+
     else:
         crete_text_html("<h1>NewsPapers List</h1>")
-        _map.save("turkey.html")
-    return open("main.html","r+",encoding="utf-8-sig").read()
+        #_map.save("turkey.html")
+        return render_template('index.html', page="Home")
+
     
 @app.route('/map',methods=['GET'])
 def get_map():

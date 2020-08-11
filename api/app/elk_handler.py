@@ -18,7 +18,7 @@ class ELK_Handler():
     ELK handler
     """
     def __init__(self):
-        self.client = Elasticsearch(['http://elastic:changeme@localhost:9200/'])
+        self.client = Elasticsearch(['http://{}:{}@{}/'.format(UN, PW, URL)])
 
     def index(self, data, es_index):
         doc_id = ""
