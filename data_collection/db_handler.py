@@ -1,5 +1,5 @@
+import io
 import os
-import couchdb
 import configparser
 from cloudant.client import CouchDB
 from cloudant.document import Document
@@ -28,15 +28,28 @@ class DB_Handler():
             self.db = self.client[self.db_name]
 
     def save(self, data, attachment = None, att_type = None):
+        doc_id = ""
         if (self.db_name == "gazete"):
             doc_id = ".".join((data["date"], data["name"]))
         elif (self.db_name == "page"):
-            doc_id = ".".join((data["date"], data["name"] + "_" + data[page]))
+            doc_id = ".".join((data["date"], data["name"] + "_" + str(data["page"])))
         data["_id"] = doc_id
+
+        try:
+            del data['timestamp'] # timestamps are not allowed
+        except:
+            pass
+        
         self.db.create_document(data)
         if attachment:
+            if (att_type == "image/png"):
+                buf = io.BytesIO()
+                attachment.save(buf, format='JPEG')
+                attachment = buf.getvalue()
             with Document(self.db, doc_id) as document:
                 document.put_attachment(att_type.split("/")[-1], att_type, attachment)
+
+
 
             
         

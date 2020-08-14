@@ -6,13 +6,17 @@ import json
 import pickle
 import requests
 import configparser
+from queue import Queue
+from threading import Thread
+
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 
 from db_handler import DB_Handler
 from ocr_handler import OCR_Handler
 from ner_handler import NER_Handler
-from solr_handler import Solr_Handler
+from elk_handler import ELK_Handler
+#from solr_handler import Solr_Handler
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
@@ -21,7 +25,11 @@ DATASET_URL = config["DEFAULT"]["dataset_url"]
 db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
 ner = NER_Handler()
-solr = Solr_Handler()
+#solr = Solr_Handler()
+es = ELK_Handler()
+
+# Queue for multithreading
+row_queue = Queue()
 
 def createDirectory(dirPath):
     if not os.path.isdir(dirPath):
@@ -66,32 +74,56 @@ def paper_download(url):
     r = requests.get(url)
     return r.content
 
+def parallel_process():
+    while True:
+        row = row_queue.get()
+        date = date_formatter(row.find('td').text)
+        url = row.find('a')['href']
+        pdf = paper_download(url)
+        paper_json = {}
+        paper_json['name'] = paper_name
+        paper_json['date'] = date
+        paper_json['url'] = url
+        db_gazete.save(paper_json, pdf, "application/pdf")
+        # es.index(paper_json, "gazete-index")
+        
+        ocr = OCR_Handler(pdf)
+        ocr.run()
+        for i, text in enumerate(ocr.text):
+            paper_json["ner"] = ner.run(text)
+            paper_json["page"] = i + 1
+            paper_json["text"] = text
+            img_tmp = ocr.pages[i]
+            #INFO: Solr replaced with elasticsearch
+            es.index(paper_json, "page-index")
+            db_page.save(paper_json, img_tmp, "image/png")
+            
+
+        row_queue.task_done()
+
 def paper_to_db(paper,paper_name):    
     tables = paper.findAll("div", {"class":"content"})
-    for table in tables: #gazetenin yılları
+    print("## Processing " + paper_name)
+    
+    workers = [
+        Thread(target=parallel_process, daemon=True)
+        for _ in range(1)
+    ]
+
+    for table in tables[:2]: #gazetenin yılları
         table_body = table.find('table')
         rows = table_body.find_all('tr')
         del rows[0] #tablonun sütun adları silinir
-        print("File Download Progress")
-        for row in tqdm(rows): #pdfs
-            date = date_formatter(row.find('td').text)
-            url = row.find('a')['href']
-            pdf = paper_download(url)
-            paper_json = {}
-            paper_json['name'] = paper_name
-            paper_json['date'] = date
-            paper_json['url'] = url
-            db_gazete.save(paper_json, pdf, "application/pdf")
-            ocr = OCR_Handler(pdf)
-            ocr.run()
-            for i, text in enumerate(ocr.text):
-                paper_json["ner"] = ner.run(text)
-                paper_json["page"] = i + 1
-                paper_json["text"] = text
-                img_tmp = ocr.pages[i]
-                db_page.save(paper_json, img_tmp, "image/png")
-                #TODO: 404 Error
-                #solr.index(paper_json)
+        for row in rows: #pdfs
+            row_queue.put(row)
+
+    print("#### Running jobs for " + paper_name)
+    for w in workers:
+        w.start()
+
+    for w in tqdm(workers):
+        w.join()
+            
     
 if __name__ == '__main__':
     r = requests.get(DATASET_URL)
@@ -104,5 +136,4 @@ if __name__ == '__main__':
         r = requests.get(papers_url)
         paper = BeautifulSoup(r.content,"html.parser")
         paper_name = str(papers_url).split("=")[1]
-        print("### Processing " + paper_name)
         paper_to_db(paper,paper_name)
