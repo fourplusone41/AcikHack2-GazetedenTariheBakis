@@ -13,6 +13,10 @@ Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.t
 
 [![FourPlusOne | Gazeteden Tarihe Bakış | AçıkHack2 | NoAudio](https://img.youtube.com/vi/xED-qn6rsiQ/0.jpg)](https://www.youtube.com/embed/xED-qn6rsiQ)
 
+# Not
+
+**Projemizin, yarışmanın son gününe (31 Temmuz 2020) kadar olan kısmı, github üzerindeki [master branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/master)'te bulunurken güncel hali ise [dev branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/dev)'te bulunmaktadır.**
+
 # Mimari
 
 * `docker-compose`yapısı, 4 farklı dockerize edilmiş servis içermektedir. Bunlar,
