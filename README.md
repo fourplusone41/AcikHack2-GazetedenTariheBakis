@@ -7,7 +7,7 @@ Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.t
 
 # Sunum
 
-[![GazetedenTariheBakisSunum](https://repository-images.githubusercontent.com/278169737/5daa1e80-c471-11ea-8709-340db5722341)](https://drive.google.com/drive/folders/1rt_3-kap5ZYuraF9OzHfIbGdalhK2rK5)
+[![GazetedenTariheBakisSunum](https://repository-images.githubusercontent.com/278169737/5daa1e80-c471-11ea-8709-340db5722341)](https://drive.google.com/file/d/1Usm0PAAw2BNjLxJT3cCdexsMMS8OwTfz/view?usp=sharing)
 
 # Demo
 
