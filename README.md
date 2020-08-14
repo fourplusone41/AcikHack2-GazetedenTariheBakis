@@ -15,7 +15,10 @@ Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.t
 
 # Not
 
-**Projemizin, yarışmanın son gününe (31 Temmuz 2020) kadar olan kısmı, github üzerindeki [master branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/master)'te bulunurken güncel hali ise [dev branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/dev)'te bulunmaktadır.**
+**Projemiz, 2 branchte yer almaktadır:**
+
+- **[master branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/master), projemizin son teslim tarihli halini içerir (31 Temmuz 2020).**
+- **[dev branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/dev) ise, projemizin güncel halini içerir.**
 
 # Mimari
 
