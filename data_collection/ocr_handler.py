@@ -46,7 +46,7 @@ class OCR_Handler():
             text = pytesseract.image_to_string(img_clean, self.lang)
             self.text.append(text)
 
-            self.ocr_queue.task_done()
+        #    self.ocr_queue.task_done()
 
     def pdf2img(self):
         #print("convert pdf to images")

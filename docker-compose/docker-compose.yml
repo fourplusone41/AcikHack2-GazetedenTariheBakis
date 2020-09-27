@@ -65,20 +65,20 @@ services:
       - elasticsearch
     # restart: always
     
-  solr:
-    container_name: solr
-    image: solr:$SOLR_VERSION
-    volumes:
-      - type: volume
-        source: solr
-        target: /var/solr
-    ports:
-      - "8983:8983"
-    networks:
-      - fourplusone
-    command:
-      - solr-precreate
-      - gettingstarted
+  # solr:
+    # container_name: solr
+    # image: solr:$SOLR_VERSION
+    # volumes:
+      # - type: volume
+        # source: solr
+        # target: /var/solr
+    # ports:
+      # - "8983:8983"
+    # networks:
+      # - fourplusone
+    # command:
+      # - solr-precreate
+      # - gettingstarted
   
     # restart: always
 
