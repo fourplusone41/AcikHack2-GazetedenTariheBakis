@@ -18,9 +18,9 @@ from bs4 import BeautifulSoup
 from pdf2image import convert_from_bytes
 
 from db_handler import DB_Handler
-from ocr_handler import OCR_Handler
-from ner_handler import NER_Handler
-from elk_handler import ELK_Handler
+#from ocr_handler import OCR_Handler
+#from ner_handler import NER_Handler
+#from elk_handler import ELK_Handler
 #from solr_handler import Solr_Handler
 
 config = configparser.ConfigParser()
@@ -43,7 +43,10 @@ issues = []
 # List for no multithreading
 # row_list = []
 
+# Flags
 split_flag = True
+thread_flag = False
+size_flag = False
 
 def createDirectory(dirPath):
     if not os.path.isdir(dirPath):
@@ -165,12 +168,13 @@ def date_formatter(date):
 #     #for w in tqdm(workers):
 #     #    w.join()
 
-def download_size(issue):
+def download_size(issue_nmbr):
+    issue = issues[issue_nmbr]
     row = issue[0]
     url = row.find('a')['href']
     try:
         r = requests.get(url, stream=True).headers['Content-length']
-        return r
+        return int(r)
     except:
         return 0
 
@@ -237,15 +241,18 @@ if __name__ == '__main__':
     issues = scrap()
     nmbr_issues = len(issues)
 
-    sizes = []
-    for issue in tqdm(issues):
-        ret = download_size(issue)
-        sizes.append(ret)
+    if size_flag:
+        sizes = []
+        with Pool(os.cpu_count() * 2) as pool:
+            with tqdm(total=nmbr_issues) as pbar:
+                for j, s in enumerate(pool.imap(download_size, range(nmbr_issues))):
+                    sizes.append(s)
+                    pbar.update()
 
-    msg = "# Downloading {} Bytes of data! {} Links failed.".format(sum(sizes), len([x for x in sizes if x == 0]))
-    print(msg)
-    with open("logs.txt", "a") as f:
-        f.write(msg)
+        msg = "# Downloading {} Bytes of data! {} Links failed.".format(sum(sizes), len([x for x in sizes if x == 0]))
+        print(msg)
+        with open("logs.txt", "a") as f:
+            f.write(msg)
 
     # downloads = []
     # for issue in tqdm(issues):
@@ -258,11 +265,16 @@ if __name__ == '__main__':
     # pool = Pool(os.cpu_count())
     # downloads = list(tqdm(pool.imap(download, range(nmbr_issues)), total=nmbr_issues))
     downloads = []
-    with Pool(os.cpu_count()) as pool:
-        with tqdm(total=nmbr_issues) as pbar:
-            for j, d in enumerate(pool.imap(download, range(nmbr_issues))):
-                downloads.append(d)
-                pbar.update()
+    if thread_flag:
+        with Pool(os.cpu_count()) as pool:
+            with tqdm(total=nmbr_issues) as pbar:
+                for j, d in enumerate(pool.imap(download, range(nmbr_issues))):
+                    downloads.append(d)
+                    pbar.update()
+    else:
+        for i in tqdm(range(nmbr_issues)):
+            downloads.append(download(i))
+            time.sleep(0.5)
     
     fails = [x for x in downloads if x is not True]
 
