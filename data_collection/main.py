@@ -215,7 +215,10 @@ def scrap():
             for row in rows: #pdfs
                 issues.append((row, paper_name))
 
-    print("# Downloading {} Total Issues from {} Papers #".format(len(issues), len(papers)))
+    msg = "# Downloading {} Total Issues from {} Papers #".format(len(issues), len(papers))
+    print(msg)
+    with open("logs.txt", "a") as f:
+        f.write(msg)
 
     return issues
     
@@ -224,12 +227,15 @@ if __name__ == '__main__':
     issues = scrap()
     nmbr_issues = len(issues)
 
-    # sizes = []
-    # for issue in tqdm(issues):
-    #     ret = download_size(issue)
-    #     sizes.append(ret)
+    sizes = []
+    for issue in tqdm(issues):
+        ret = download_size(issue)
+        sizes.append(ret)
 
-    # print("# Downloading {} Bytes of data! {} Links failed.".format(sum(sizes), len([x for x in sizes if x == 0])))
+    msg = "# Downloading {} Bytes of data! {} Links failed.".format(sum(sizes), len([x for x in sizes if x == 0]))
+    print(msg)
+    with open("logs.txt", "a") as f:
+        f.write(msg)
 
     # downloads = []
     # for issue in tqdm(issues):
@@ -248,9 +254,14 @@ if __name__ == '__main__':
                 downloads.append(d)
                 pbar.update()
     
-    # fails = [x for x in downloads if x is not True]
-    # print("# Successful: {} | Failed: {}".format(len(downloads) - len(fails), len(fails)))
-    # with open("fails.txt", "w") as f:
-    #     f.write(json.dumps(fails))
+    fails = [x for x in downloads if x is not True]
+
+    msg = "# Successful: {} | Failed: {}".format(len(downloads) - len(fails), len(fails))
+    print(msg)
+    with open("logs.txt", "a") as f:
+        f.write(msg)
+
+    with open("fails.txt", "w") as f:
+        f.write(json.dumps(fails))
 
     #paper_to_db(paper,paper_name)
