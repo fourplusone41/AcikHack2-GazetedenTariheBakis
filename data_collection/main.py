@@ -15,6 +15,7 @@ from multiprocessing import Pool
 
 from tqdm import tqdm
 from bs4 import BeautifulSoup
+from pdf2image import convert_from_bytes
 
 from db_handler import DB_Handler
 from ocr_handler import OCR_Handler
@@ -28,9 +29,9 @@ DATASET_URL = config["DEFAULT"]["dataset_url"]
 
 db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
-ner = NER_Handler()
+#ner = NER_Handler()
 #solr = Solr_Handler()
-es = ELK_Handler()
+#es = ELK_Handler()
 
 # multithreading
 lock = Lock()
@@ -41,6 +42,8 @@ issues = []
 
 # List for no multithreading
 # row_list = []
+
+split_flag = True
 
 def createDirectory(dirPath):
     if not os.path.isdir(dirPath):
@@ -189,6 +192,13 @@ def download(issue_nmbr):
     paper_json['date'] = date
     paper_json['url'] = url
     db_gazete.save(paper_json, pdf, "application/pdf")
+
+    if split_flag:
+        pages = convert_from_bytes(pdf, 300)
+        for i, p in enumerate(pages):
+            paper_json["page"] = i + 1
+            db_page.save(paper_json, p, "image/png")
+
     return True
 
 def scrap():
