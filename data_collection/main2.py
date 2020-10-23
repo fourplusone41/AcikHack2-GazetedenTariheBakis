@@ -237,70 +237,9 @@ def scrap():
 
     return issues
     
-def DoDownload(start, end):
-    issues = scrap()
-    nmbr_issues = len(issues)
-
-    if size_flag:
-        sizes = []
-        with Pool(os.cpu_count() * 2) as pool:
-            with tqdm(total=nmbr_issues) as pbar:
-                for j, s in enumerate(pool.imap(download_size, range(nmbr_issues))):
-                    sizes.append(s)
-                    pbar.update()
-
-        msg = "# Downloading {} Bytes of data! {} Links failed.".format(sum(sizes), len([x for x in sizes if x == 0]))
-        print(msg)
-        with open("logs.txt", "a") as f:
-            f.write(msg)
-
-    # downloads = []
-    # for issue in tqdm(issues):
-    #     ret = download(issue)
-    #     downloads.append(ret)
-
-    # https://stackoverflow.com/questions/41920124/multiprocessing-use-tqdm-to-display-a-progress-bar/
-    # https://stackoverflow.com/questions/52021254/maximum-recursion-depth-exceeded-multiprocessing-and-bs4
-
-    # pool = Pool(os.cpu_count())
-    # downloads = list(tqdm(pool.imap(download, range(nmbr_issues)), total=nmbr_issues))
-    downloads = []
-    if thread_flag:
-        with Pool(os.cpu_count()) as pool:
-            with tqdm(total=nmbr_issues) as pbar:
-                for j, d in enumerate(pool.imap(download, range(nmbr_issues))):
-                    downloads.append(d)
-                    pbar.update()
-    else:
-        for i in tqdm(range(start, end)):
-            downloads.append(download(i))
-            time.sleep(0.1)
-
-    fails = [x for x in downloads if x is not True]
-
-    msg = "# Successful: {} | Failed: {}".format(len(downloads) - len(fails), len(fails))
-    print(msg)
-    with open("logs.txt", "a") as f:
-        f.write(msg)
-
-    with open("fails_{}.txt".format(start), "w") as f:
-        f.write(json.dumps(fails))
-
-    #paper_to_db(paper,paper_name)
-
-def DoOCR(start, end):
-    ids = db_page.query_all(start, end)
+if __name__ == '__main__':
+    ids = db_page.query_all()
     print(len(ids))
     doc, att = db_page.get_doc(ids[0])
     print(doc)
-    #print(att)
-
-def DoIndex():
-    pass
-
-if __name__ == '__main__':
-    options = {"dl": DoDownload,
-               "ocr": DoOCR,
-               "index": DoIndex
-    }
-    options[sys.argv[1]](int(sys.argv[2]), int(sys.argv[3]))
+    print(att)

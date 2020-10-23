@@ -3,7 +3,7 @@ import os
 import configparser
 from cloudant.client import CouchDB
 from cloudant.document import Document
-
+from cloudant.result import Result, ResultByKey
 
 #veritabani baglantisi
 config = configparser.ConfigParser()
@@ -48,7 +48,28 @@ class DB_Handler():
                 attachment = buf.getvalue()
             with Document(self.db, doc_id) as document:
                 document.put_attachment(att_type.split("/")[-1], att_type, attachment)
+    
+    def get_doc(self, doc_id):
+        #doc = self.db[doc_id]
+        doc = None
+        att = None
+        with Document(self.db, doc_id) as document:
+            doc = document
+            att = document.get_attachment("png")
+        return doc, att
 
+    def query_id(self,  id_value):
+        selector = {'_id': {'$eq': id_value}}
+        docs = self.db.get_query_result(selector)
+        
+    def query_all(self, start = 0, end = 100):
+        ids = []
+        result_collection = Result(self.db.all_docs)
+        result = result_collection[start:end]
+        for res in result:
+            ids.append(res['id'])
+
+        return ids
 
 
             
