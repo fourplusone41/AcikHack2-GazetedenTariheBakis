@@ -319,8 +319,8 @@ def DoOCR(start, end):
     ids = db_page.query_all(start, end)
     print(len(ids))
     for i in tqdm(range(len(ids))):
-        doc, att = db_page.get_doc(ids[0])
-        #print(doc)
+        doc, att = db_page.get_doc(ids[i])
+        print(ids[i])
         #print(type(att))
         stream = io.BytesIO(att)
         img = Image.open(stream)
@@ -335,9 +335,8 @@ def DoOCR(start, end):
         ocr = OCR_Handler(pages = [img])
         ocr.run()
         new_doc = {}
-        print(doc['_id'])
         new_doc['text'] = ocr.text[0]
-        db_page.update_doc(doc['_id'], new_doc)
+        db_page.update_doc(ids[i], new_doc)
         #db_page_txt.save(doc, att, "image/png")
 
 def DoIndex():
