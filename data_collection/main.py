@@ -2,6 +2,8 @@
 # coding: utf-8
 
 import os
+import re
+import io
 import sys
 import json
 import time
@@ -14,14 +16,18 @@ from multiprocessing import Lock
 from multiprocessing import Pool
 #from multiprocessing.dummy import Pool as ThreadPool
 
+import numpy
+import cv2
+from PIL import Image
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 from pdf2image import convert_from_bytes
+import pytesseract
 
 from db_handler import DB_Handler
-#from ocr_handler import OCR_Handler
-#from ner_handler import NER_Handler
-#from elk_handler import ELK_Handler
+from ocr_handler import OCR_Handler
+from ner_handler import NER_Handler
+from elk_handler import ELK_Handler
 #from solr_handler import Solr_Handler
 
 config = configparser.ConfigParser()
@@ -30,6 +36,7 @@ DATASET_URL = config["DEFAULT"]["dataset_url"]
 
 db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
+db_page_txt = DB_Handler("page_txt")
 #ner = NER_Handler()
 #solr = Solr_Handler()
 #es = ELK_Handler()
@@ -43,6 +50,9 @@ issues = []
 
 # List for no multithreading
 # row_list = []
+
+pages = []
+text = []
 
 # Flags
 split_flag = True
@@ -83,7 +93,10 @@ def date_formatter(date):
     }
     for k,v in date_table.items():
         date_modern = date_modern.lower().replace(k, v)
-
+        
+    if "_" in date_modern:
+        return date_modern
+    
     date_return = date_modern.split(" ")
     date_return.reverse()
     return "_".join(date_return)
@@ -288,12 +301,44 @@ def DoDownload(start, end):
 
     #paper_to_db(paper,paper_name)
 
+def imagePreprocessing(page):
+        #image = cv2.imread(path)
+        image = numpy.array(page)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        gray = cv2.threshold(gray, 0, 255,
+        cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        return gray
+
+def ocr_parallel(index):
+    img_clean = imagePreprocessing(pages[index])
+    txt = pytesseract.image_to_string(img_clean, 'tur')
+    text.append((index, txt))
+
 def DoOCR(start, end):
+    imgs = []
     ids = db_page.query_all(start, end)
     print(len(ids))
-    doc, att = db_page.get_doc(ids[0])
-    print(doc)
-    #print(att)
+    for i in tqdm(range(len(ids))):
+        doc, att = db_page.get_doc(ids[0])
+        #print(doc)
+        #print(type(att))
+        stream = io.BytesIO(att)
+        img = Image.open(stream)
+        #imgs.append(img)
+        #print(type(img))
+
+    #with Pool(2) as pool:
+    #        with tqdm(total = len(pages)) as pbar:
+    #            for j, r in enumerate(pool.imap(ocr_parallel, range(len(pages)))):
+    #                pbar.update()
+
+        ocr = OCR_Handler(pages = [img])
+        ocr.run()
+        new_doc = {}
+        print(doc['_id'])
+        new_doc['text'] = ocr.text[0]
+        db_page.update_doc(doc['_id'], new_doc)
+        #db_page_txt.save(doc, att, "image/png")
 
 def DoIndex():
     pass

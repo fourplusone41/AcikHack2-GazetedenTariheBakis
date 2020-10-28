@@ -31,7 +31,7 @@ class DB_Handler():
         doc_id = ""
         if (self.db_name == "gazete"):
             doc_id = ".".join((data["date"], data["name"]))
-        elif (self.db_name == "page"):
+        elif (self.db_name == "page" or self.db_name == "page_txt"):
             doc_id = ".".join((data["date"], data["name"] + "_" + str(data["page"])))
         data["_id"] = doc_id
 
@@ -57,6 +57,11 @@ class DB_Handler():
             doc = document
             att = document.get_attachment("png")
         return doc, att
+
+    def update_doc(self, doc_id, new_data):
+        with Document(self.db, doc_id) as document:
+            for k in new_data.keys():
+                document[k] = new_data[k]
 
     def query_id(self,  id_value):
         selector = {'_id': {'$eq': id_value}}
