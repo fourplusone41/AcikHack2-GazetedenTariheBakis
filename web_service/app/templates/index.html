@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="container">
+    <diw class="row justify-content-md-center">
+      <br/>
+      <br/>
+      <h1>GAZTEDEN TARİHE BAKIŞ VE ARAMA</h1>
+    </diw>
+    <div class="row">
+      <div class="col">
+        <form role="form" method="post">
+          <div class="form-group">
+              <label>Start Year:</label>
+              <input type="range" class="form-control" id="start_year" name="start_year" min="1900" max="1999" oninput="yearOutputId.value = start_year.value" required> <!--; end_year.min=start_year.value">-->
+              <output id="yearOutputId">1900</output>
+              <label>End Year:</label>
+              <input type="range" class="form-control"  id="end_year" name="end_year" min="1900" max="1999" oninput="yearOutputId2.value = end_year.value" required> <!-- > -->
+              <output id="yearOutputId2">1999</output>
+              <label>Keyword:</label>
+              <input type="text" class="form-control" id="keyword" name="keyword">
+              <br/>
+              <input type="submit" class="btn btn-primary" value="Submit"></button>
+        </form> 
+      </div>
+    </div>
+    {% block content2 %}{% endblock %}
+  </div>
+
+{% endblock %}

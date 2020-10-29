@@ -75,11 +75,11 @@ Sorgular yapmak için, `localhost:3000/` adresine gidin ve kullanıcı arayüzü
 
 # Citation
 
-IEEE Open Access'te yayınlamak amacıyla yazılmakta olan makalemiz:
+Makalemiz yakında yayınlanacak:
 
-    @ARTICLE{8768370,
+    @ARTICLE{tr_historical_newspaper},
     author={H. {Menhour}, R. N. {Sarikaya}, M. {Aktaş},  R. {Sağlam},  H. B. {Şahin},  E. {Ekinci} and S. {Eken}},
-    journal={IEEE Access},
+    journal={},
     title={Searchable Turkish OCRed Historical Newspaper Collection 1928–1942},
     year={},
     month={},
