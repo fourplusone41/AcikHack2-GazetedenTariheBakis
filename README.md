@@ -13,12 +13,12 @@ Bu projenin amacı [Istanbul Gazeteden Tarihe Bakış](http://nek.istanbul.edu.t
 
 [![FourPlusOne | Gazeteden Tarihe Bakış | AçıkHack2 | NoAudio](https://img.youtube.com/vi/xED-qn6rsiQ/0.jpg)](https://www.youtube.com/embed/xED-qn6rsiQ)
 
-# Not
+# ~~Not~~
 
-**Projemiz, 2 branchte yer almaktadır:**
+~~**Projemiz, 2 branchte yer almaktadır:**~~
 
-- **[master branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/master), projemizin son teslim tarihli halini içerir (31 Temmuz 2020).**
-- **[dev branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/dev) ise, projemizin güncel halini içerir.**
+- ~~**[master branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/master), projemizin son teslim tarihli halini içerir (31 Temmuz 2020).**~~
+- ~~**[dev branch](https://github.com/fourplusone41/AcikHack2-GazetedenTariheBakis/tree/dev) ise, projemizin güncel halini içerir.**~~
 
 # Mimari
 
