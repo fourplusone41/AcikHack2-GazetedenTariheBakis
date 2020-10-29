@@ -37,9 +37,9 @@ DATASET_URL = config["DEFAULT"]["dataset_url"]
 db_gazete = DB_Handler("gazete")
 db_page = DB_Handler("page")
 db_page_txt = DB_Handler("page_txt")
-#ner = NER_Handler()
+ner = NER_Handler()
 #solr = Solr_Handler()
-#es = ELK_Handler()
+es = ELK_Handler()
 
 # multithreading
 lock = Lock()
@@ -53,6 +53,7 @@ issues = []
 
 pages = []
 text = []
+ids = []
 
 # Flags
 split_flag = True
@@ -314,6 +315,13 @@ def ocr_parallel(index):
     txt = pytesseract.image_to_string(img_clean, 'tur')
     text.append((index, txt))
 
+def ner_parallel(index):
+    print(index, len(ids))
+    doc, att = db_page.get_doc(ids[index])
+    new_doc = {}
+    new_doc['ner'] = ner.run(doc['text'])
+    db_page.update_doc(ids[index], new_doc)
+
 def DoOCR(start, end):
     imgs = []
     ids = db_page.query_all(start, end)
@@ -339,12 +347,60 @@ def DoOCR(start, end):
         db_page.update_doc(ids[i], new_doc)
         #db_page_txt.save(doc, att, "image/png")
 
-def DoIndex():
-    pass
+def DoNER(start, end):
+    ids = db_page.query_all(start, end)
+    nmbr_pages = len(ids)
+    print(nmbr_pages)
+
+    # Parallel Version
+    #ids_par = ids
+    #with Pool(2) as pool:
+    #    with tqdm(total = nmbr_pages) as pbar:
+    #        for j, r in enumerate(pool.imap(ner_parallel, range(nmbr_pages))):
+    #            pbar.update()
+
+    # Standard
+    for i in tqdm(range(len(ids))):
+        doc, att = db_page.get_doc(ids[i])
+        print(ids[i])
+        new_doc = {}
+        new_doc['ner'] = ner.run(doc['text'])
+        db_page.update_doc(ids[i], new_doc)
+
+def DoIdx(start, end):
+    ids = db_page.query_all(start, end)
+    nmbr_pages = len(ids)
+    print(nmbr_pages)
+    for i in tqdm(range(len(ids))):
+        doc, att = db_page.get_doc(ids[i])
+        new_doc = dict((k, doc[k]) for k in ('name', 'date', 'url', 'ner', 'page', 'text') if k in doc)
+        try:
+            es.index(new_doc, "page-index")
+        except:
+            with open("logs_es.txt", "a") as f:
+                f.write("{}\n".format(ids[i]))
+
+
+
+def DoCln(start, end):
+    ids = db_page.query_all(start, end)
+    nmbr_pages = len(ids)
+    print(nmbr_pages)
+    for i in tqdm(range(len(ids))):
+        doc, att = db_page.get_doc(ids[i])
+        old_date = doc['date']
+        new_date = date_formatter(old_date)
+        if new_date != old_date:
+            print(ids[i], new_date)
+            new_doc = {}
+            new_doc['date'] = new_date
+            db_page.update_doc(ids[i], new_doc)
 
 if __name__ == '__main__':
     options = {"dl": DoDownload,
                "ocr": DoOCR,
-               "index": DoIndex
+               "ner": DoNER,
+               "idx": DoIdx,
+               "cln": DoCln
     }
     options[sys.argv[1]](int(sys.argv[2]), int(sys.argv[3]))

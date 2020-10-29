@@ -20,7 +20,7 @@ class ELK_Handler():
     ELK handler
     """
     def __init__(self):
-        self.es = Elasticsearch(['http://elastic:changeme@localhost:9200/'])
+        self.es = Elasticsearch(['http://elastic:changeme@{}/'.format(URL)])
 
     def index(self, data, es_index):
         doc_id = ""

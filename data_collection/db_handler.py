@@ -63,6 +63,10 @@ class DB_Handler():
             for k in new_data.keys():
                 document[k] = new_data[k]
 
+    def del_doc(self, doc_id):
+        document = self.db[doc_id]
+        document.delete()
+
     def query_id(self,  id_value):
         selector = {'_id': {'$eq': id_value}}
         docs = self.db.get_query_result(selector)
