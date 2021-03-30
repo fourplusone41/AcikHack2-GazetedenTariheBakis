@@ -75,17 +75,18 @@ Sorgular yapmak için, `localhost:3000/` adresine gidin ve kullanıcı arayüzü
 
 # Citation
 
-Makalemiz yakında yayınlanacak:
+Makalemiz yayınlandı:
 
     @ARTICLE{tr_historical_newspaper},
     author={H. {Menhour}, R. N. {Sarikaya}, M. {Aktaş},  R. {Sağlam},  H. B. {Şahin},  E. {Ekinci} and S. {Eken}},
-    journal={},
+    journal={Journal of Information Science},
     title={Searchable Turkish OCRed Historical Newspaper Collection 1928–1942},
-    year={},
-    month={},
+    year={2021},
+    month={3},
     volume={},
     number={},
-    pages={},
+    pages={1-13},
+    publisher={SAGE Publications Sage UK: London, England},
     keywords={Historical  newspapers,  optical  character  recognition,  name  entity  recognition,  microservices, data journalism, full text search, visualization.},
-    doi={},
+    doi={10.1177/01655515211000642},
     ISSN={},}
